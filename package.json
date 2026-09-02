@@ -1,8 +1,18 @@
 {
-  "name": "apipatch-verification-workspace",
+  "name": "stripe-schema-fixture-suite",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "start:mock": "bun mock-server/index.ts",
+    "test": "bun test",
+    "verify:ci": "bun scripts/ci-verify.ts",
+    "typecheck": "tsc --noEmit",
     "apipatch": "bun ../self-maintaing-Api/packages/cli/bin/apipatch.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
   }
 }
