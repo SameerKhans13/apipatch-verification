@@ -5,7 +5,7 @@ export const stripe = new Stripe("sk_test_mock_secret_key", {
 });
 
 export async function createCustomerCharge(amount: number, token: string) {
-  return await stripe.charges.create({
+  return await stripe.paymentIntents.create({
     amount,
     currency: "usd",
     payment_method: token,

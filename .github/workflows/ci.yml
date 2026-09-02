@@ -1,0 +1,33 @@
+name: Stripe API Schema Fixtures & Mock CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  verify:
+    name: Validate Fixtures, Breaking Changes & Mock Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun Runtime
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install root and workspace dependencies
+        run: |
+          bun install
+          cd stripe-sandbox-consumer && bun install
+
+      - name: Run Unit & Contract Tests
+        run: bun test
+
+      - name: Execute 16-Category CI Schema & Mock Verification Suite
+        run: bun run verify:ci
+        env:
+          STRIPE_MOCK_PORT: 8090

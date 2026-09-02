@@ -6,7 +6,7 @@ describe("Stripe Sandbox Verification", () => {
 
   beforeEach(() => {
     capturedParams = null;
-    spyOn(stripe.charges, "create").mockImplementation(async (params: any) => {
+    const mockHandler = async (params: any) => {
       capturedParams = params;
       return {
         id: "ch_test_123456789",
@@ -19,7 +19,9 @@ describe("Stripe Sandbox Verification", () => {
         payment_method: params.payment_method,
         description: params.description,
       } as any;
-    });
+    };
+    spyOn(stripe.charges, "create").mockImplementation(mockHandler);
+    spyOn(stripe.paymentIntents, "create").mockImplementation(mockHandler);
   });
 
   it("should process customer charge without errors", async () => {

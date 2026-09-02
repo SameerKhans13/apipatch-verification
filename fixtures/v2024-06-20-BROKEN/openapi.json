@@ -1,0 +1,918 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Stripe API - Deliberately Injected Breaking Changes",
+    "version": "2024-06-20-BROKEN",
+    "description": "Stripe API specification with deliberately injected breaking changes across 16 categories for schema validation testing."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/v1",
+      "description": "Local Mock Server"
+    }
+  ],
+  "paths": {
+    "/charges": {
+      "get": {
+        "summary": "List all charges (Category 11: pagination shape modified)",
+        "operationId": "listCharges",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          },
+          {
+            "name": "after_cursor",
+            "in": "query",
+            "description": "Category 11: starting_after renamed to after_cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of charges",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrokenChargeList"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Category 12: Broken error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrokenErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/charges/{id}": {
+      "get": {
+        "summary": "Retrieve a charge",
+        "operationId": "getCharge",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The charge object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Charge"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/refunds": {
+      "post": {
+        "summary": "Create a refund",
+        "operationId": "createRefund",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["charge"],
+                "properties": {
+                  "charge": { "type": "string" },
+                  "amount": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Refund created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Refund"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment_intents": {
+      "get": {
+        "summary": "List all payment intents",
+        "operationId": "listPaymentIntents",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          },
+          {
+            "name": "after_cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of payment intents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrokenPaymentIntentList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a payment intent",
+        "operationId": "createPaymentIntent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrokenCreatePaymentIntentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "PaymentIntent created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrokenPaymentIntent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment_intents/{id}": {
+      "get": {
+        "summary": "Retrieve a payment intent",
+        "operationId": "getPaymentIntent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PaymentIntent object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrokenPaymentIntent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment_intents/{id}/actions/confirm": {
+      "post": {
+        "summary": "Category 9: Endpoint path changed from /payment_intents/{id}/confirm to /payment_intents/{id}/actions/confirm",
+        "operationId": "confirmPaymentIntentPathChanged",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payment_method": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmed PaymentIntent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrokenPaymentIntent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers": {
+      "get": {
+        "summary": "List customers",
+        "operationId": "listCustomers",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          },
+          {
+            "name": "after_cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of customers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrokenCustomerList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a customer",
+        "operationId": "createCustomer",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Customer object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrokenCustomer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{id}": {
+      "get": {
+        "summary": "Retrieve customer",
+        "operationId": "getCustomer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrokenCustomer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete customer",
+        "operationId": "deleteCustomer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted customer object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletedCustomer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions": {
+      "get": {
+        "summary": "List subscriptions",
+        "operationId": "listSubscriptions",
+        "parameters": [
+          {
+            "name": "customer",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of subscriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrokenSubscriptionList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create subscription",
+        "operationId": "createSubscription",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrokenCreateSubscriptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subscription object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{id}": {
+      "get": {
+        "summary": "Retrieve subscription",
+        "operationId": "getSubscription",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{id}/cancel": {
+      "post": {
+        "summary": "Category 10: HTTP method changed from DELETE /subscriptions/{id} to POST /subscriptions/{id}/cancel",
+        "operationId": "cancelSubscriptionPost",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cancelled Subscription object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhook_endpoints": {
+      "get": {
+        "summary": "List webhook endpoints",
+        "operationId": "listWebhookEndpoints",
+        "responses": {
+          "200": {
+            "description": "List of webhooks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "object": { "type": "string", "example": "list" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/WebhookEndpoint" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create webhook endpoint",
+        "operationId": "createWebhookEndpoint",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url", "enabled_events"],
+                "properties": {
+                  "url": { "type": "string" },
+                  "enabled_events": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created WebhookEndpoint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpoint"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Charge": {
+        "type": "object",
+        "required": ["id", "object", "amount", "paid", "status"],
+        "properties": {
+          "id": { "type": "string", "example": "ch_1Gs8yF2eZvKYlo2C" },
+          "object": { "type": "string", "enum": ["charge"], "example": "charge" },
+          "amount": { "type": "integer", "example": 2000 },
+          "currency": {
+            "type": "string",
+            "nullable": true,
+            "description": "Category 14: Non-nullable field changed to nullable"
+          },
+          "pricing": {
+            "type": "object",
+            "description": "Category 7: Flat field currency nested inside pricing object",
+            "properties": {
+              "currency": { "type": "string", "example": "usd" },
+              "unit_amount": { "type": "integer", "example": 2000 }
+            }
+          },
+          "paid": { "type": "boolean", "example": true },
+          "status": {
+            "type": "string",
+            "enum": ["succeeded", "pending", "failed"],
+            "example": "succeeded"
+          },
+          "payment_method": { "type": "string", "example": "pm_123" },
+          "customer": { "type": "string", "nullable": true, "example": "cus_123" },
+          "description": { "type": "string", "nullable": true, "example": "Order #1001" }
+        }
+      },
+      "BrokenChargeList": {
+        "type": "object",
+        "description": "Category 11: Pagination shape changed from object=list/data/has_more to object=page/items/has_next_page/next_cursor",
+        "required": ["object", "items", "has_next_page"],
+        "properties": {
+          "object": { "type": "string", "enum": ["page"], "example": "page" },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Charge" }
+          },
+          "has_next_page": { "type": "boolean", "example": false },
+          "next_cursor": { "type": "string", "nullable": true, "example": "cur_123" }
+        }
+      },
+      "Refund": {
+        "type": "object",
+        "required": ["id", "object", "amount", "charge", "status"],
+        "properties": {
+          "id": { "type": "string", "example": "re_123" },
+          "object": { "type": "string", "enum": ["refund"] },
+          "amount": { "type": "integer", "example": 2000 },
+          "charge": { "type": "string", "example": "ch_123" },
+          "status": { "type": "string", "enum": ["succeeded", "pending", "failed", "canceled"] }
+        }
+      },
+      "BrokenPaymentIntent": {
+        "type": "object",
+        "description": "PaymentIntent with deliberate injected breaking changes",
+        "required": ["id", "object", "amount", "currency", "status", "payment_method_types", "description"],
+        "properties": {
+          "id": { "type": "string", "example": "pi_1Gs8yF2eZvKYlo2C" },
+          "object": { "type": "string", "enum": ["payment_intent"], "example": "payment_intent" },
+          "amount": {
+            "type": "string",
+            "description": "Category 3: Field type changed from integer (cents) to string (e.g. '20.00')",
+            "example": "20.00"
+          },
+          "currency": { "type": "string", "example": "usd" },
+          "status": {
+            "type": "string",
+            "description": "Category 5: Enum values 'requires_action' and 'canceled' removed from stable status list",
+            "enum": [
+              "requires_payment_method",
+              "requires_confirmation",
+              "processing",
+              "requires_capture",
+              "succeeded"
+            ],
+            "example": "requires_payment_method"
+          },
+          "capture_method": {
+            "type": "string",
+            "description": "Category 16: Default value change from 'automatic' to 'manual' (semantic breaking)",
+            "enum": ["automatic", "manual"],
+            "default": "manual",
+            "example": "manual"
+          },
+          "payment_method": { "type": "string", "nullable": true, "example": "pm_123" },
+          "customer": { "type": "string", "nullable": true, "example": "cus_123" },
+          "description": {
+            "type": "string",
+            "nullable": false,
+            "description": "Category 14: Nullable field changed to non-nullable (and now required in response)"
+          },
+          "payment_method_types": {
+            "type": "string",
+            "description": "Category 15: Array of strings changed to single string",
+            "example": "card"
+          },
+          "metadata": {
+            "type": "string",
+            "description": "Category 3: Field type changed from Record<string, string> object to raw JSON string blob",
+            "example": "{\"order_id\":\"1234\"}"
+          }
+        }
+      },
+      "BrokenPaymentIntentList": {
+        "type": "object",
+        "description": "Category 11: Broken pagination response envelope",
+        "required": ["object", "items", "has_next_page"],
+        "properties": {
+          "object": { "type": "string", "enum": ["page"], "example": "page" },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/BrokenPaymentIntent" }
+          },
+          "has_next_page": { "type": "boolean", "example": false },
+          "next_cursor": { "type": "string", "nullable": true }
+        }
+      },
+      "BrokenCreatePaymentIntentRequest": {
+        "type": "object",
+        "description": "Category 4: Required currency made optional, and optional receipt_email made required. Category 2: customer parameter renamed to customer_id",
+        "required": ["amount", "receipt_email"],
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Category 3: Type changed from integer to string",
+            "example": "20.00"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Category 4: Previously required field now optional (non-breaking)",
+            "example": "usd"
+          },
+          "receipt_email": {
+            "type": "string",
+            "description": "Category 4: Previously optional field now required (breaking)",
+            "example": "receipts@example.com"
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Category 2: Parameter customer renamed to customer_id",
+            "example": "cus_123"
+          },
+          "payment_method": { "type": "string" },
+          "capture_method": {
+            "type": "string",
+            "enum": ["automatic", "manual"],
+            "default": "manual",
+            "description": "Category 16: Default value changed from automatic to manual"
+          },
+          "payment_method_types": {
+            "type": "string",
+            "description": "Category 15: Array changed to single string",
+            "example": "card"
+          },
+          "metadata": {
+            "type": "string",
+            "description": "Category 3: Object changed to JSON string"
+          }
+        }
+      },
+      "BrokenCustomer": {
+        "type": "object",
+        "required": ["id", "object", "created"],
+        "properties": {
+          "id": { "type": "string", "example": "cus_123" },
+          "object": { "type": "string", "enum": ["customer"], "example": "customer" },
+          "created": { "type": "integer", "example": 1600000000 },
+          "email": { "type": "string", "nullable": true, "example": "sam@example.com" },
+          "name": { "type": "string", "nullable": true, "example": "Sam Developer" },
+          "phone": { "type": "string", "nullable": true },
+          "default_payment_source_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Category 2: default_source renamed to default_payment_source_id",
+            "example": "card_123"
+          },
+          "billing_address_city": {
+            "type": "string",
+            "description": "Category 7: Flattened from billing_details.address.city"
+          },
+          "billing_address_country": {
+            "type": "string",
+            "description": "Category 7: Flattened from billing_details.address.country"
+          },
+          "account_status": {
+            "type": "string",
+            "description": "Category 6: Added new enum values 'suspended' and 'pending_approval' (non-breaking addition)",
+            "enum": ["active", "suspended", "pending_approval"],
+            "default": "active"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      },
+      "BrokenCustomerList": {
+        "type": "object",
+        "required": ["object", "items", "has_next_page"],
+        "properties": {
+          "object": { "type": "string", "enum": ["page"] },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/BrokenCustomer" }
+          },
+          "has_next_page": { "type": "boolean" }
+        }
+      },
+      "CreateCustomerRequest": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "name": { "type": "string" },
+          "payment_method": { "type": "string" },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      },
+      "DeletedCustomer": {
+        "type": "object",
+        "required": ["id", "object", "deleted"],
+        "properties": {
+          "id": { "type": "string", "example": "cus_123" },
+          "object": { "type": "string", "enum": ["customer"] },
+          "deleted": { "type": "boolean", "example": true }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "required": ["id", "object", "customer", "status", "current_period_start", "current_period_end", "line_item"],
+        "properties": {
+          "id": { "type": "string", "example": "sub_123" },
+          "object": { "type": "string", "enum": ["subscription"] },
+          "customer": { "type": "string", "example": "cus_123" },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "past_due",
+              "unpaid",
+              "canceled",
+              "incomplete",
+              "incomplete_expired",
+              "trialing",
+              "paused"
+            ]
+          },
+          "current_period_start": { "type": "integer", "example": 1600000000 },
+          "current_period_end": { "type": "integer", "example": 1602678400 },
+          "line_item": {
+            "type": "object",
+            "description": "Category 15: items array changed to single line_item object",
+            "required": ["price", "quantity"],
+            "properties": {
+              "price": { "type": "string" },
+              "quantity": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "BrokenSubscriptionList": {
+        "type": "object",
+        "required": ["object", "items", "has_next_page"],
+        "properties": {
+          "object": { "type": "string", "enum": ["page"] },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Subscription" }
+          },
+          "has_next_page": { "type": "boolean" }
+        }
+      },
+      "BrokenCreateSubscriptionRequest": {
+        "type": "object",
+        "description": "Category 15: items array changed to single item object",
+        "required": ["customer", "item"],
+        "properties": {
+          "customer": { "type": "string" },
+          "item": {
+            "type": "object",
+            "required": ["price"],
+            "properties": {
+              "price": { "type": "string" },
+              "quantity": { "type": "integer", "default": 1 }
+            }
+          }
+        }
+      },
+      "WebhookEndpoint": {
+        "type": "object",
+        "required": ["id", "object", "url", "enabled_events", "status"],
+        "properties": {
+          "id": { "type": "string", "example": "we_123" },
+          "object": { "type": "string", "enum": ["webhook_endpoint"] },
+          "url": { "type": "string", "example": "https://api.example.com/webhook" },
+          "enabled_events": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status": { "type": "string", "example": "enabled" },
+          "secret": { "type": "string", "example": "whsec_test_secret" }
+        }
+      },
+      "BrokenEvent": {
+        "type": "object",
+        "description": "Category 13: Webhook event payload schema for data.object changed to BrokenPaymentIntent",
+        "required": ["id", "object", "api_version", "created", "data", "type"],
+        "properties": {
+          "id": { "type": "string", "example": "evt_123" },
+          "object": { "type": "string", "enum": ["event"] },
+          "api_version": { "type": "string", "example": "2024-06-20-BROKEN" },
+          "created": { "type": "integer", "example": 1600000000 },
+          "type": { "type": "string", "example": "payment_intent.succeeded" },
+          "data": {
+            "type": "object",
+            "required": ["object"],
+            "properties": {
+              "object": {
+                "$ref": "#/components/schemas/BrokenPaymentIntent",
+                "description": "Category 13: Injected broken PaymentIntent payload inside webhook event"
+              }
+            }
+          }
+        }
+      },
+      "BrokenErrorResponse": {
+        "type": "object",
+        "description": "Category 12: Error response shape changed from error object to errors array with new required field doc_url and error code renamed",
+        "required": ["errors"],
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["title", "detail", "status_code", "doc_url"],
+              "properties": {
+                "title": { "type": "string", "example": "Not Found" },
+                "detail": { "type": "string", "example": "The requested resource could not be found." },
+                "code": {
+                  "type": "string",
+                  "description": "Category 12: 'resource_missing' error code renamed to 'not_found'",
+                  "example": "not_found"
+                },
+                "status_code": { "type": "integer", "example": 404 },
+                "doc_url": {
+                  "type": "string",
+                  "description": "Category 12: New required field in error schema",
+                  "example": "https://stripe.com/docs/error-codes/not-found"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
