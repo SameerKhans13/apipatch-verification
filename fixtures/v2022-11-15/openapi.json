@@ -1,0 +1,916 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Stripe API - Mid Evolution",
+    "version": "2022-11-15",
+    "description": "Stripe API specification representing the 2022-11-15 release."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/v1",
+      "description": "Local Mock Server"
+    }
+  ],
+  "paths": {
+    "/charges": {
+      "get": {
+        "summary": "List all charges",
+        "operationId": "listCharges",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "starting_after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of charges",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChargeList"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a charge",
+        "operationId": "createCharge",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateChargeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Charge created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Charge"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/charges/{id}": {
+      "get": {
+        "summary": "Retrieve a charge",
+        "operationId": "getCharge",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The charge object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Charge"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/refunds": {
+      "post": {
+        "summary": "Create a refund (Modern path replacing /charges/{id}/refund)",
+        "operationId": "createRefund",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["charge"],
+                "properties": {
+                  "charge": { "type": "string" },
+                  "amount": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Refund created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Refund"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment_intents": {
+      "get": {
+        "summary": "List all payment intents",
+        "operationId": "listPaymentIntents",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "starting_after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of payment intents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntentList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a payment intent",
+        "operationId": "createPaymentIntent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentIntentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "PaymentIntent created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment_intents/{id}": {
+      "get": {
+        "summary": "Retrieve a payment intent",
+        "operationId": "getPaymentIntent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PaymentIntent object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment_intents/{id}/confirm": {
+      "post": {
+        "summary": "Confirm a payment intent",
+        "operationId": "confirmPaymentIntent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payment_method": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmed PaymentIntent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers": {
+      "get": {
+        "summary": "List customers",
+        "operationId": "listCustomers",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "starting_after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of customers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a customer",
+        "operationId": "createCustomer",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Customer object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{id}": {
+      "get": {
+        "summary": "Retrieve customer",
+        "operationId": "getCustomer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete customer",
+        "operationId": "deleteCustomer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted customer object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletedCustomer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions": {
+      "get": {
+        "summary": "List subscriptions",
+        "operationId": "listSubscriptions",
+        "parameters": [
+          {
+            "name": "customer",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of subscriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create subscription",
+        "operationId": "createSubscription",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSubscriptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subscription object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{id}": {
+      "get": {
+        "summary": "Retrieve subscription",
+        "operationId": "getSubscription",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Cancel subscription",
+        "operationId": "cancelSubscription",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cancelled Subscription object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhook_endpoints": {
+      "get": {
+        "summary": "List webhook endpoints",
+        "operationId": "listWebhookEndpoints",
+        "responses": {
+          "200": {
+            "description": "List of webhooks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "object": { "type": "string", "example": "list" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/WebhookEndpoint" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create webhook endpoint",
+        "operationId": "createWebhookEndpoint",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url", "enabled_events"],
+                "properties": {
+                  "url": { "type": "string" },
+                  "enabled_events": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created WebhookEndpoint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpoint"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Charge": {
+        "type": "object",
+        "required": ["id", "object", "amount", "currency", "paid", "status"],
+        "properties": {
+          "id": { "type": "string", "example": "ch_1Gs8yF2eZvKYlo2C" },
+          "object": { "type": "string", "enum": ["charge"], "example": "charge" },
+          "amount": { "type": "integer", "example": 2000 },
+          "currency": { "type": "string", "example": "usd" },
+          "paid": { "type": "boolean", "example": true },
+          "status": {
+            "type": "string",
+            "enum": ["succeeded", "pending", "failed"],
+            "example": "succeeded"
+          },
+          "payment_method": { "type": "string", "example": "pm_123" },
+          "customer": { "type": "string", "nullable": true, "example": "cus_123" },
+          "description": { "type": "string", "nullable": true, "example": "Order #1001" },
+          "payment_method_details": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string", "example": "card" },
+              "card": {
+                "type": "object",
+                "properties": {
+                  "brand": { "type": "string", "example": "Visa" },
+                  "last4": { "type": "string", "example": "4242" },
+                  "exp_month": { "type": "integer", "example": 12 },
+                  "exp_year": { "type": "integer", "example": 2028 }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ChargeList": {
+        "type": "object",
+        "required": ["object", "data", "has_more"],
+        "properties": {
+          "object": { "type": "string", "enum": ["list"], "example": "list" },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Charge" }
+          },
+          "has_more": { "type": "boolean", "example": false }
+        }
+      },
+      "CreateChargeRequest": {
+        "type": "object",
+        "required": ["amount", "currency"],
+        "properties": {
+          "amount": { "type": "integer", "description": "Amount in cents", "example": 2000 },
+          "currency": { "type": "string", "example": "usd" },
+          "payment_method": { "type": "string", "description": "Payment method identifier", "example": "pm_card_visa" },
+          "source": { "type": "string", "description": "Deprecated: legacy source token", "example": "tok_visa" },
+          "customer": { "type": "string", "example": "cus_123" },
+          "description": { "type": "string" }
+        }
+      },
+      "Refund": {
+        "type": "object",
+        "required": ["id", "object", "amount", "charge", "status"],
+        "properties": {
+          "id": { "type": "string", "example": "re_123" },
+          "object": { "type": "string", "enum": ["refund"] },
+          "amount": { "type": "integer", "example": 2000 },
+          "charge": { "type": "string", "example": "ch_123" },
+          "status": { "type": "string", "enum": ["succeeded", "pending", "failed", "canceled"] }
+        }
+      },
+      "PaymentIntent": {
+        "type": "object",
+        "required": ["id", "object", "amount", "currency", "status", "client_secret", "payment_method_types"],
+        "properties": {
+          "id": { "type": "string", "example": "pi_1Gs8yF2eZvKYlo2C" },
+          "object": { "type": "string", "enum": ["payment_intent"], "example": "payment_intent" },
+          "amount": { "type": "integer", "example": 2000 },
+          "currency": { "type": "string", "example": "usd" },
+          "status": {
+            "type": "string",
+            "enum": [
+              "requires_payment_method",
+              "requires_confirmation",
+              "requires_action",
+              "processing",
+              "requires_capture",
+              "canceled",
+              "succeeded"
+            ],
+            "example": "requires_payment_method"
+          },
+          "client_secret": { "type": "string", "example": "pi_1Gs8yF2eZvKYlo2C_secret_abc123" },
+          "statement_descriptor_suffix": { "type": "string", "nullable": true, "example": "INV1001" },
+          "capture_method": {
+            "type": "string",
+            "enum": ["automatic", "manual"],
+            "default": "automatic",
+            "example": "automatic"
+          },
+          "payment_method": { "type": "string", "nullable": true, "example": "pm_123" },
+          "customer": { "type": "string", "nullable": true, "example": "cus_123" },
+          "description": { "type": "string", "nullable": true },
+          "payment_method_types": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["card", "affirm", "afterpay_clearpay"]
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      },
+      "PaymentIntentList": {
+        "type": "object",
+        "required": ["object", "data", "has_more"],
+        "properties": {
+          "object": { "type": "string", "enum": ["list"], "example": "list" },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PaymentIntent" }
+          },
+          "has_more": { "type": "boolean", "example": false }
+        }
+      },
+      "CreatePaymentIntentRequest": {
+        "type": "object",
+        "required": ["amount", "currency"],
+        "properties": {
+          "amount": { "type": "integer", "example": 2000 },
+          "currency": { "type": "string", "example": "usd" },
+          "customer": { "type": "string" },
+          "payment_method": { "type": "string" },
+          "capture_method": { "type": "string", "enum": ["automatic", "manual"], "default": "automatic" },
+          "description": { "type": "string" },
+          "payment_method_types": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": ["card"]
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      },
+      "Customer": {
+        "type": "object",
+        "required": ["id", "object", "created"],
+        "properties": {
+          "id": { "type": "string", "example": "cus_123" },
+          "object": { "type": "string", "enum": ["customer"], "example": "customer" },
+          "created": { "type": "integer", "example": 1600000000 },
+          "email": { "type": "string", "nullable": true, "example": "sam@example.com" },
+          "name": { "type": "string", "nullable": true, "example": "Sam Developer" },
+          "phone": { "type": "string", "nullable": true },
+          "default_source": { "type": "string", "nullable": true, "example": "card_123" },
+          "billing_details": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "email": { "type": "string" },
+              "name": { "type": "string" },
+              "address": {
+                "type": "object",
+                "properties": {
+                  "city": { "type": "string" },
+                  "country": { "type": "string" },
+                  "line1": { "type": "string" },
+                  "postal_code": { "type": "string" }
+                }
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      },
+      "CustomerList": {
+        "type": "object",
+        "required": ["object", "data", "has_more"],
+        "properties": {
+          "object": { "type": "string", "enum": ["list"] },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Customer" }
+          },
+          "has_more": { "type": "boolean" }
+        }
+      },
+      "CreateCustomerRequest": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "name": { "type": "string" },
+          "payment_method": { "type": "string" },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      },
+      "DeletedCustomer": {
+        "type": "object",
+        "required": ["id", "object", "deleted"],
+        "properties": {
+          "id": { "type": "string", "example": "cus_123" },
+          "object": { "type": "string", "enum": ["customer"] },
+          "deleted": { "type": "boolean", "example": true }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "required": ["id", "object", "customer", "status", "current_period_start", "current_period_end", "items"],
+        "properties": {
+          "id": { "type": "string", "example": "sub_123" },
+          "object": { "type": "string", "enum": ["subscription"] },
+          "customer": { "type": "string", "example": "cus_123" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "past_due", "unpaid", "canceled", "incomplete", "incomplete_expired", "trialing", "paused"]
+          },
+          "current_period_start": { "type": "integer", "example": 1600000000 },
+          "current_period_end": { "type": "integer", "example": 1602678400 },
+          "items": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "price": { "type": "string" },
+                    "quantity": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SubscriptionList": {
+        "type": "object",
+        "required": ["object", "data", "has_more"],
+        "properties": {
+          "object": { "type": "string", "enum": ["list"] },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Subscription" }
+          },
+          "has_more": { "type": "boolean" }
+        }
+      },
+      "CreateSubscriptionRequest": {
+        "type": "object",
+        "required": ["customer", "items"],
+        "properties": {
+          "customer": { "type": "string" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["price"],
+              "properties": {
+                "price": { "type": "string" },
+                "quantity": { "type": "integer", "default": 1 }
+              }
+            }
+          }
+        }
+      },
+      "WebhookEndpoint": {
+        "type": "object",
+        "required": ["id", "object", "url", "enabled_events", "status"],
+        "properties": {
+          "id": { "type": "string", "example": "we_123" },
+          "object": { "type": "string", "enum": ["webhook_endpoint"] },
+          "url": { "type": "string", "example": "https://api.example.com/webhook" },
+          "enabled_events": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status": { "type": "string", "example": "enabled" },
+          "secret": { "type": "string", "example": "whsec_test_secret" }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "required": ["id", "object", "api_version", "created", "data", "type"],
+        "properties": {
+          "id": { "type": "string", "example": "evt_123" },
+          "object": { "type": "string", "enum": ["event"] },
+          "api_version": { "type": "string", "example": "2022-11-15" },
+          "created": { "type": "integer", "example": 1600000000 },
+          "type": { "type": "string", "example": "payment_intent.succeeded" },
+          "data": {
+            "type": "object",
+            "required": ["object"],
+            "properties": {
+              "object": {
+                "type": "object",
+                "description": "The specific resource payload for this event"
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["message", "type"],
+            "properties": {
+              "message": { "type": "string", "example": "No such charge: ch_invalid" },
+              "type": { "type": "string", "example": "invalid_request_error" },
+              "code": { "type": "string", "example": "resource_missing" },
+              "param": { "type": "string", "nullable": true }
+            }
+          }
+        }
+      }
+    }
+  }
+}
