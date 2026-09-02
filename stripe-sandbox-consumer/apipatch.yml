@@ -1,0 +1,21 @@
+version: 1
+verification:
+  mode: "sandbox"
+  timeout: 120
+  baseline-diff: true
+  commands:
+    pre-install: "bun install"
+    typecheck: "tsc --noEmit"
+    test: "bun test"
+pull-request:
+  target-branch: "main"
+  branch-prefix: "apipatch"
+  labels:
+    - "dependencies"
+    - "api-remediation"
+    - "stripe"
+updates:
+  - vendor: "stripe"
+    package-ecosystem: "npm"
+    schedule:
+      interval: "on-release"

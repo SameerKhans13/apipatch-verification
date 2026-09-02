@@ -1,0 +1,8 @@
+{
+  "name": "apipatch-verification-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "apipatch": "bun ../self-maintaing-Api/packages/cli/bin/apipatch.ts"
+  }
+}
