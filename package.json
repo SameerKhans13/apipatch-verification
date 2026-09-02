@@ -3,12 +3,19 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "stripe-sandbox-consumer"
+  ],
   "scripts": {
     "start:mock": "bun mock-server/index.ts",
     "test": "bun test",
+    "test:consumer": "cd stripe-sandbox-consumer && bun test",
     "verify:ci": "bun scripts/ci-verify.ts",
     "typecheck": "tsc --noEmit",
     "apipatch": "bun ../self-maintaing-Api/packages/cli/bin/apipatch.ts"
+  },
+  "dependencies": {
+    "stripe": "^11.0.0"
   },
   "devDependencies": {
     "@types/bun": "latest",
